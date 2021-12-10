@@ -1,10 +1,11 @@
 package com.bae.playlist.web;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -68,10 +69,10 @@ public class PlaylistControllerIntegrationTest {
 	
 	@Test
 	void getAllTest() throws Exception {
+		RequestBuilder req = get("/getAll");
+		
 		List<Playlist> testPlay = List.of(new Playlist(1, "songtitle", "songartist", 100, "songalbum"));
 		String testPlayAsJSON = this.mapper.writeValueAsString(testPlay);
-		
-		RequestBuilder req = get("/getAll");
 		ResultMatcher checkStatus = status().isOk();
 		ResultMatcher checkBody = content().json(testPlayAsJSON); 
 
@@ -79,6 +80,53 @@ public class PlaylistControllerIntegrationTest {
 		
 	}
 	
+	
+	@Test
+	void getByIdTest() throws Exception {
+		RequestBuilder req = get("/get/1");
+		
+		Playlist testPlay = new Playlist(1, "songtitle", "songartist", 100, "songalbum");
+		String testPlayAsJSON = this.mapper.writeValueAsString(testPlay);
+		ResultMatcher checkStatus = status().isOk();
+		ResultMatcher checkBody = content().json(testPlayAsJSON); 
+
+		this.mvc.perform(req).andExpect(checkStatus).andExpect(checkBody);
+		
+	}
+	
+	@Test
+	void getByTitleTest() throws Exception {
+		List<Playlist> testPlay = List.of(new Playlist(1, "songtitle", "songartist", 100, "songalbum"));
+		String testPlayAsJSON = this.mapper.writeValueAsString(testPlay);
+		
+		RequestBuilder req = get("/getByTitle/songtitle");
+		ResultMatcher checkStatus = status().isOk();
+		ResultMatcher checkBody = content().json(testPlayAsJSON); 
+
+		this.mvc.perform(req).andExpect(checkStatus).andExpect(checkBody);
+		
+	}
+	
+	@Test
+	void updateByIdTest() throws Exception {
+		Playlist updatePlay = new Playlist(1, "sampletitlee", "sampleartistt", 2455, "samplealbumm");
+		String updatePlayAsJSON = this.mapper.writeValueAsString(updatePlay);
+		
+		RequestBuilder req = put("/replace/1").contentType(MediaType.APPLICATION_JSON).content(updatePlayAsJSON);
+
+		ResultMatcher checkStatus = status().isAccepted(); 
+		ResultMatcher checkBody = content().json(updatePlayAsJSON);
+
+		this.mvc.perform(req).andExpect(checkStatus).andExpect(checkBody);
+	}
+	
+	@Test
+	void removeByIdTest() throws Exception {
+		RequestBuilder req = delete("/remove/1");
+		ResultMatcher checkStatus = status().isNoContent();
+		
+		this.mvc.perform(req).andExpect(checkStatus);
+	}
 }
 
 

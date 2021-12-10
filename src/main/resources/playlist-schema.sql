@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS `playlist` CASCADE;
+
+CREATE TABLE `playlist` (
+	`id` INTEGER PRIMARY KEY AUTO_INCREMENT,
+	`album` VARCHAR(255),
+	`artist` VARCHAR(255),
+	`duration` INTEGER,
+	`title` VARCHAR(255)
+);
